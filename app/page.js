@@ -1,12 +1,7 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import React from 'react'
-
-const useReactMediaRecorder = dynamic(
-  () => import('react-media-recorder').then((mod) => mod.useReactMediaRecorder),
-  { ssr: false }
-)
+import { useReactMediaRecorder } from 'react-media-recorder'
 
 export default function Home() {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
@@ -40,9 +35,26 @@ export default function Home() {
       <h1>Medical Dictation Transcriber 🩺🎙️</h1>
 
       <div style={{ margin: '20px' }}>
-        <button onClick={startRecording}>Start Recording 🎤</button>
-        <button onClick={stopRecording} style={{ marginLeft: '10px' }}>
-          Stop Recording ⏹️
+        <button 
+          onClick={startRecording}
+          style={{
+            padding: '10px 20px', 
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
+          🎤 Start Recording
+        </button>
+        <button 
+          onClick={stopRecording} 
+          style={{
+            marginLeft: '10px', 
+            padding: '10px 20px', 
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
+          ⏹️ Stop Recording
         </button>
       </div>
 
@@ -54,9 +66,14 @@ export default function Home() {
           <div>
             <button
               onClick={() => transcribeAudio(mediaBlobUrl)}
-              style={{ marginTop: '10px' }}
+              style={{
+                marginTop: '10px', 
+                padding: '10px 20px', 
+                cursor: 'pointer',
+                fontSize: '16px'
+              }}
             >
-              Transcribe Audio ✨
+              ✨ Transcribe Audio
             </button>
           </div>
         </div>
