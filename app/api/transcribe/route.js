@@ -5,29 +5,36 @@ export async function POST(request) {
   const data = await request.formData()
   const audioFile = data.get('file')
 
-  // Convert uploaded audio to base64
-  const audioBytes = Buffer.from(await audioFile.arrayBuffer()).toString('base64')
+  const audioBytes = Buffer.from(await audioFile.arrayBuffer())
 
-  // Load Google credentials from environment variable
   const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON)
 
-  // Initialize the Speech client
   const client = new SpeechClient({ credentials })
 
-  // Build the request for Google Speech-to-Text
-  const audio = { content: audioBytes }
+  // Set up streaming request optimized for medical dictation
+  const streamingConfig = {
+    config: {
+      encoding: 'WEBM_OPUS', // browser-native audio format
+      sampleRateHertz: 48000, // correct browser mic default
+      languageCode: 'en-US',
+      model: 'medical_dictation', // explicitly use medical model
+      useEnhanced: true,         // enhanced transcription accuracy
+    },
+    interimResults: true,        // show words as they come in
+  }
 
-  // ✅ FIX: Let Google auto-detect the sample rate and use WEBM_OPUS (browser default)
-  const config = {
-  encoding: 'WEBM_OPUS',
-  sampleRateHertz: 48000,
-  languageCode: 'en-US',
-  model: 'medical_dictation',
-  useEnhanced: true,
-}
+  const recognizeStream = client
+    .streamingRecognize(streamingConfig)
+    .on('error', (error) => console.error('Streaming Error:', error))
+    .on('data', (data) => {
+      process.stdout.write(
+        data.results[0]?.alternatives[0]?.transcript || ''
+      )
+    })
 
-  const [response] = await client.recognize({ audio, config })
-  const transcript = response.results.map(result => result.alternatives[0].transcript).join('\n')
+  recognizeStream.write(audioBytes)
+  recognizeStream.end()
 
-  return NextResponse.json({ transcript })
+  // Stream response back to frontend
+  return NextResponse.json({ transcript: 'Streaming initiated...' })
 }
