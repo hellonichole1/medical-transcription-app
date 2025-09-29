@@ -1,7 +1,12 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import React from 'react'
-import { useReactMediaRecorder } from 'react-media-recorder'
+
+const useReactMediaRecorder = dynamic(
+  () => import('react-media-recorder').then((mod) => mod.useReactMediaRecorder),
+  { ssr: false }
+)
 
 export default function Home() {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
