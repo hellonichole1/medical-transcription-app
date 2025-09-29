@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import React from 'react'
 
 const DynamicRecorder = dynamic(
-  () => import('../components/RecorderComponent'),
+  () => import('./components/RecorderComponent'),
   { ssr: false }
 )
 
