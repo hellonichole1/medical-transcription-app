@@ -19,9 +19,12 @@ export async function POST(request) {
 
   // ✅ FIX: Let Google auto-detect the sample rate and use WEBM_OPUS (browser default)
   const config = {
-    encoding: 'WEBM_OPUS',   // instead of LINEAR16
-    languageCode: 'en-US',   // no sampleRateHertz set → auto-detect
-  }
+  encoding: 'WEBM_OPUS',
+  sampleRateHertz: 48000,
+  languageCode: 'en-US',
+  model: 'medical_dictation',
+  useEnhanced: true,
+}
 
   const [response] = await client.recognize({ audio, config })
   const transcript = response.results.map(result => result.alternatives[0].transcript).join('\n')
