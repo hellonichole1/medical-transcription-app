@@ -1,11 +1,17 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useReactMediaRecorder } from 'react-media-recorder'
 
 export default function RecorderComponent() {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({ audio: true })
+
+  useEffect(() => {
+    if (mediaBlobUrl) {
+      transcribeAudio(mediaBlobUrl)
+    }
+  }, [mediaBlobUrl])
 
   const transcribeAudio = async (audioBlobUrl) => {
     const audioBlob = await fetch(audioBlobUrl).then((r) => r.blob())
@@ -46,14 +52,6 @@ export default function RecorderComponent() {
       {mediaBlobUrl && (
         <div>
           <audio src={mediaBlobUrl} controls />
-          <div>
-            <button
-              onClick={() => transcribeAudio(mediaBlobUrl)}
-              style={{ marginTop: '10px' }}
-            >
-              Transcribe Audio ✨
-            </button>
-          </div>
         </div>
       )}
 
